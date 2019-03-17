@@ -3,10 +3,12 @@
 #include <stdio.h>
 #include <arduino-serial-lib.h>
 
-#define PARTS_NUMBER	0x02
+#define RESET_VECTORS 0
 #define PARTS_SIZE		0x400
+#define PROGRAM_SIZE 0x8000
 
-uint8_t program[0x8000];
+uint8_t program[PROGRAM_SIZE];
+uint8_t PARTS_NUMBER = 0x20;
 uint16_t programSize = 0;
 int	serial;
 
@@ -33,7 +35,12 @@ int main(int argc, char **argv)
 		return (1);
 	}
 	file = fopen(argv[1], "rb");
-	fread(program, sizeof(program), 0x8000, file);
+	fread(program, sizeof(program), PROGRAM_SIZE, file);
+	if (!RESET_VECTORS) {
+		uint16_t min_size = 0x7ffa;
+		while (program[--min_size] == 0);
+		PARTS_NUMBER = (min_size - (min_size % PARTS_SIZE)) / PARTS_SIZE + 1;
+	}
   if (argc == 3)
 		strcpy(interface, argv[2]);
   else
@@ -42,9 +49,9 @@ int main(int argc, char **argv)
   serial = serialport_init(interface, 9600);
 	if (serial == -1)
 		return 1;
-  sleep(3);
+  sleep(2);
 	
-	serialport_writebyte(serial, 0x02);
+	serialport_writebyte(serial, PARTS_NUMBER);
 	for (uint8_t part = 0; part < PARTS_NUMBER; part++) {
 		for (uint16_t i = 0; i < PARTS_SIZE; i++) {
 			printf("\r[%i/%i] Send program part    %3i%%", part + 1, PARTS_NUMBER, (i + 1) * 100 / PARTS_SIZE);
@@ -80,7 +87,7 @@ int main(int argc, char **argv)
 			serialport_writebyte(serial, 0);
 		}
 	}
-	isOk = 1;
+	uint16_t bytes_differ = 0;
 	for (uint16_t i = 0; i < PARTS_SIZE * PARTS_NUMBER; i++) {
 		n = 0;
 		printf("\rVerify program integrity %3i%%", (i + 1) * 100 / (PARTS_SIZE * PARTS_NUMBER));
@@ -88,19 +95,19 @@ int main(int argc, char **argv)
 		while (n != 1)
 			n = read(serial, &byte, 1);
 		if (program[i] != byte)
-			isOk = 0;
+			bytes_differ++;
 	}
-	if (isOk)
+	if (!bytes_differ)
 		printf("\rIntegrity done!              \n");
 	else
-		printf("\rIntegrity failed...          \n");
+		printf("\rIntegrity failed...  (0x%04x)\n", bytes_differ);
 	serialport_close(serial);
 	return 0;
 }
 
 void printProgram()
 {
-	for (uint16_t i = 0; i < 0x8000; i++) {
+	for (uint16_t i = 0; i < PROGRAM_SIZE; i++) {
 		if (!(i % 16)) {
 			if (i)
 				printf("\n");
@@ -108,4 +115,5 @@ void printProgram()
 		}
 		printf("%02x ", program[i]);
 	}
+	printf("\n");
 }
