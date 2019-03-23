@@ -52,7 +52,25 @@ void setup() {
   pinMode(WRITE_EN, OUTPUT);
 
   Serial.begin(9600);
-	delay(1000);
+	while (Serial.available() <= 0);
+	switch (Serial.read()) {
+		case 0:
+			program_eeprom();
+			break;
+		case 1:
+			dump_eeprom(0x20);
+			break;
+		default:
+			break;
+	}
+}
+
+void dump_eeprom(uint8_t parts) {
+	for (uint16_t i = 0; i < PARTS_SIZE * parts; i++)
+		Serial.write(readAddress(i));
+}
+
+void program_eeprom() {
 	while (Serial.available() <= 0);
 	PARTS_NUMBER = Serial.read();
 	for (uint8_t part = 0; part < PARTS_NUMBER; part++) {
@@ -71,8 +89,7 @@ void setup() {
 			}
 		}
 	}
-	for (uint16_t i = 0; i < PARTS_SIZE * PARTS_NUMBER; i++)
-		Serial.write(readAddress(i));
+	dump_eeprom(PARTS_NUMBER);
 }
 
 void loop() {

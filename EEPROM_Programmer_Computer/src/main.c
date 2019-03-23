@@ -14,14 +14,6 @@ int	serial;
 
 void printProgram();
 
-void input()
-{
-	uint8_t b;
-	int n = read(serial, &b, 1);
-	if(n == 1)
-		printf("%i\n", b);
-}
-
 int main(int argc, char **argv)
 {
 	FILE *file;
@@ -49,8 +41,44 @@ int main(int argc, char **argv)
   serial = serialport_init(interface, 9600);
 	if (serial == -1)
 		return 1;
-  sleep(2);
+  sleep(1);
 	
+	
+	
+	if (0) {
+		serialport_writebyte(serial, 1);
+		sleep(1);
+		/* Part to dump eeprom progressively
+		for (uint16_t i = 0; i < PROGRAM_SIZE; i++) {
+			n = 0;
+			printf("\rGet program %3i%%", (i + 1) * 100 / (PROGRAM_SIZE));
+			fflush(stdout);
+			while (n != 1)
+				n = read(serial, &byte, 1);
+			program[i] = byte;
+		}
+		printf("\rDone!           \n");
+		printProgram();//*/
+		/* Part to dump eeprom directly
+		for (uint16_t i = 0; i < PROGRAM_SIZE; i++) {
+			if (!(i % 16)) {
+				if (i)
+					printf("\n");
+				printf("%04x: ", i);
+			}
+			n = 0;
+			while (n != 1)
+				n = read(serial, &byte, 1);
+			program[i] = byte;
+			printf("%02x ", program[i]);
+		}
+		printf("\n");//*/
+	}
+	
+	
+	
+	serialport_writebyte(serial, 0);
+	sleep(1);
 	serialport_writebyte(serial, PARTS_NUMBER);
 	for (uint8_t part = 0; part < PARTS_NUMBER; part++) {
 		for (uint16_t i = 0; i < PARTS_SIZE; i++) {
