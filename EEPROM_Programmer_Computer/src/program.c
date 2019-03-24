@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <arduino-serial-lib.h>
 
-#define RESET_VECTORS 0
+#define RESET_VECTORS 1
 #define PARTS_SIZE		0x400
 #define PROGRAM_SIZE 0x8000
 
@@ -36,7 +36,7 @@ int main(int argc, char **argv)
   if (argc == 3)
 		strcpy(interface, argv[2]);
   else
-    strcpy(interface, "/dev/cu.usbmodem1411");
+    strcpy(interface, "/dev/cu.usbserial-UUT2");
   printf("Interface: %s\n", interface);
   serial = serialport_init(interface, 9600);
 	if (serial == -1)

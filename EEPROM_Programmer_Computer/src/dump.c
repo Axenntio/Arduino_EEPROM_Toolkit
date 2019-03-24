@@ -21,7 +21,7 @@ int main(int argc, char **argv)
   if (argc == 2)
 		strcpy(interface, argv[1]);
   else
-    strcpy(interface, "/dev/cu.usbmodem1411");
+    strcpy(interface, "/dev/cu.usbserial-UUT2");
   printf("Interface: %s\n", interface);
   serial = serialport_init(interface, 9600);
 	if (serial == -1)
