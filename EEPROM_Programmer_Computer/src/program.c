@@ -42,41 +42,6 @@ int main(int argc, char **argv)
 	if (serial == -1)
 		return 1;
   sleep(1);
-	
-	
-	
-	if (0) {
-		serialport_writebyte(serial, 1);
-		sleep(1);
-		/* Part to dump eeprom progressively
-		for (uint16_t i = 0; i < PROGRAM_SIZE; i++) {
-			n = 0;
-			printf("\rGet program %3i%%", (i + 1) * 100 / (PROGRAM_SIZE));
-			fflush(stdout);
-			while (n != 1)
-				n = read(serial, &byte, 1);
-			program[i] = byte;
-		}
-		printf("\rDone!           \n");
-		printProgram();//*/
-		/* Part to dump eeprom directly
-		for (uint16_t i = 0; i < PROGRAM_SIZE; i++) {
-			if (!(i % 16)) {
-				if (i)
-					printf("\n");
-				printf("%04x: ", i);
-			}
-			n = 0;
-			while (n != 1)
-				n = read(serial, &byte, 1);
-			program[i] = byte;
-			printf("%02x ", program[i]);
-		}
-		printf("\n");//*/
-	}
-	
-	
-	
 	serialport_writebyte(serial, 0);
 	sleep(1);
 	serialport_writebyte(serial, PARTS_NUMBER);
