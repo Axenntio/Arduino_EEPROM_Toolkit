@@ -1,13 +1,20 @@
-# Arduino Uno EEPROM programmer (eeprog)
+# Arduino Uno EEPROM programmer & EEPROM dumper (eeprog & eedump)
 
 ## Initialise project
 
 ### Uploading sketch
+#### Arduino IDE
 Open the sketch in Arduino IDE and upload it on Arduino Uno
+
+#### USBasp
+Open the sketch in Arduino IDE and export it as binary
+```console
+$> avrdude -p atmega328p -P usb -c usbasp -B 1 -U flash:w:[file.hex]
+```
 
 ### Compile
 ```console
-$> gcc -o eeprog -I inc/ src/arduino-serial-lib.c src/program.c
+$> gcc -o eeprog -I inc/ src/arduino-serial-lib.c src/prog.c
 $> gcc -o eedump -I inc/ src/arduino-serial-lib.c src/dump.c
 ```
 
