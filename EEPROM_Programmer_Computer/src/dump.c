@@ -1,5 +1,6 @@
 #include <unistd.h>
 #include <string.h>
+#include <ctype.h>
 #include <stdio.h>
 #include <arduino-serial-lib.h>
 
@@ -41,17 +42,27 @@ int main(int argc, char **argv)
 	printf("\rDone!           \n");
 	printProgram();//*/
 	//* Part to dump eeprom directly
+	char line[17];
+	
+	line[16] = '\0';
 	for (uint16_t i = 0; i < PROGRAM_SIZE; i++) {
 		if (!(i % 16)) {
-			if (i)
-				printf("\n");
+			if (i) {
+				printf("\t%s\n", line);
+			}
 			printf("%04x: ", i);
 		}
 		n = 0;
 		while (n != 1)
 			n = read(serial, &byte, 1);
 		program[i] = byte;
-		printf("%02x ", program[i]);
+		if (isprint(byte))
+			line[i % 16] = byte;
+		else
+			line[i % 16] = '.';
+		printf("%02x", program[i]);
+		if (i % 2)
+			printf(" ");
 	}
 	printf("\n");//*/
 }
