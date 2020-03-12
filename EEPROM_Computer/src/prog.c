@@ -46,7 +46,19 @@ int main(int argc, char **argv)
 		while (n != 1)
 			n = read(serial, &byte, 1);
 	}
-	printf("\r[0x%04x/0x%04x] Done...         100%%\n", program_size, program_size);
+	printf("\r[0x%04x/0x%04x] Writing program 100%%\n", program_size, program_size);
+	for (uint16_t address = 0x7ffa; address < PROGRAM_SIZE; address++) {
+		printf("\r[0x%04x/0x%04x] Writing vectors %3i%%", address, PROGRAM_SIZE, (address) * 100 / PROGRAM_SIZE);
+		fflush(stdout);
+		serialport_writebyte(serial, 0);
+		serialport_writebyte(serial, (address >> 8) & 0xff);
+		serialport_writebyte(serial, address & 0xff);
+		serialport_writebyte(serial, program[address]);
+		n = 0;
+		while (n != 1)
+			n = read(serial, &byte, 1);
+	}
+	printf("\r[0x%04x/0x%04x] Writing vectors 100%%\n", PROGRAM_SIZE, PROGRAM_SIZE);
 	uint16_t bytes_differ = 0;
 	for (uint16_t address = 0; address < program_size; address++) {
 		uint8_t byte = 0xff;
