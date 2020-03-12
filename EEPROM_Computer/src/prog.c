@@ -33,7 +33,7 @@ int main(int argc, char **argv)
 	if (serial == -1)
 		return 1;
 	uint16_t program_size = 0x7ffa;
-	while (program[--program_size] == 0);
+	while (program[--program_size] == 0 || program[program_size] == 0xff);
 	sleep(1);
 	for (uint16_t address = 0; address < program_size; address++) {
 		printf("\r[0x%04x/0x%04x] Writing program %3i%%", address, program_size, (address) * 100 / program_size);
