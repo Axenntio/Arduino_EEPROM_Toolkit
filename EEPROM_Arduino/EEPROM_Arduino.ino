@@ -3,13 +3,6 @@
 #define SHIFT_LATCH 4
 #define WRITE_EN    13
 
-#define PARTS_SIZE 0x400
-
-uint8_t PARTS_NUMBER = 0x00;
-
-
-unsigned char program[PARTS_SIZE];
-
 void setAddress(uint16_t addr, bool outputEnable) {
   shiftOut(SHIFT_DATA, SHIFT_CLK, MSBFIRST, (addr >> 8) | (outputEnable ? 0x00 : 0x80));
   shiftOut(SHIFT_DATA, SHIFT_CLK, MSBFIRST, addr);
@@ -51,47 +44,32 @@ void setup() {
   digitalWrite(WRITE_EN, HIGH);
   pinMode(WRITE_EN, OUTPUT);
 
-  Serial.begin(9600);
-	while (Serial.available() <= 0);
-	switch (Serial.read()) {
-		case 0:
-			program_eeprom();
-			break;
-		case 1:
-			dump_eeprom(0x20);
-			break;
-		default:
-			break;
-	}
-}
-
-void dump_eeprom(uint8_t parts) {
-	for (uint16_t i = 0; i < PARTS_SIZE * parts; i++)
-		Serial.write(readAddress(i));
-}
-
-void program_eeprom() {
-	while (Serial.available() <= 0);
-	PARTS_NUMBER = Serial.read();
-	for (uint8_t part = 0; part < PARTS_NUMBER; part++) {
-  	for (uint16_t i = 0; i < PARTS_SIZE; i++) {
-			while (Serial.available() <= 0);
-			program[i] = Serial.read();
-			Serial.write(1);
-		}
-		for (uint16_t i = 0; i < PARTS_SIZE; i++)
-			Serial.write(program[i]);
-		while (Serial.available() <= 0);
-		if (Serial.read()) {
-			for (uint16_t i = 0; i < PARTS_SIZE; i++) {
-				writeAddress(i + PARTS_SIZE * part, program[i]);
-				Serial.write(1);
-			}
-		}
-	}
-	dump_eeprom(PARTS_NUMBER);
+  Serial.begin(19200);
+  /*writeAddress(0x5555, 0xaa);
+  writeAddress(0x2aaa, 0x55);
+  writeAddress(0x5555, 0x80);
+  writeAddress(0x5555, 0xaa);
+  writeAddress(0x2aaa, 0x55);
+  writeAddress(0x5555, 0x20);
+  writeAddress(0x0000, 0x42);*/
 }
 
 void loop() {
-  
+  while (Serial.available() <= 2);
+  uint8_t action = Serial.read();
+  uint16_t address = (Serial.read() << 8) + Serial.read();
+  uint8_t value = 0xff;
+  switch (action) {
+    case 0:
+      while (Serial.available() <= 0);
+      value = Serial.read();
+      writeAddress(address, value);
+      Serial.write(value);
+      break;
+    case 1:
+      Serial.write(readAddress(address));
+      break;
+    default:
+      break;
+  }
 }
