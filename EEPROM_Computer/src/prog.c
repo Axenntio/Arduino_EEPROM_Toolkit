@@ -8,7 +8,7 @@
 unsigned char program[PROGRAM_SIZE];
 int	serial;
 
-void printProgram();
+void printProgram(uint16_t program_size);
 
 int main(int argc, char **argv)
 {
@@ -34,7 +34,7 @@ int main(int argc, char **argv)
 		return 1;
 	uint16_t program_size = 0x7ffa;
 	while (program[--program_size] == 0 || program[program_size] == 0xff);
-	program_size++;
+	program_size += 2;
 	sleep(1);
 	for (uint16_t address = 0; address < program_size; address++) {
 		printf("\r[0x%04x/0x%04x] Writing program %3i%%", address, program_size, (address) * 100 / program_size);
@@ -60,6 +60,7 @@ int main(int argc, char **argv)
 			n = read(serial, &byte, 1);
 	}
 	printf("\r[0x%04x/0x%04x] Writing vectors 100%%\n", PROGRAM_SIZE, PROGRAM_SIZE);
+
 	uint16_t bytes_differ = 0;
 	for (uint16_t address = 0; address < program_size; address++) {
 		uint8_t byte = 0xff;
@@ -82,9 +83,9 @@ int main(int argc, char **argv)
 	return 0;
 }
 
-void printProgram()
+void printProgram(uint16_t program_size)
 {
-	for (uint16_t i = 0; i < PROGRAM_SIZE; i++) {
+	for (uint16_t i = 0; i < program_size; i++) {
 		if (!(i % 16)) {
 			if (i)
 				printf("\n");
