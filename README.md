@@ -42,15 +42,9 @@ $> ./eeprog firmware /dev/ttyUSB0
 ### Dump
 #### Usage
 ```console
-$> ./eedump [INTERFACE]
-```
-
-#### Dump EEPROM
-```console
-$> ./eedump
-```
-
-#### Specify interface
-```console
-$> ./eedump /dev/ttyUSB0
+$> ./eedump -i <interface> -s <address> -e <address> -a <address>
+	-i <interface>: the interface of the programmer. DEFAULT = /dev/ttyUSB0
+	-s <address>: start address of the dump (base 16). DEFAULT = 0x0000
+	-e <address>: end address of the dump (base 16). DEFAULT = 0x8000
+	-a <address>: dump a specific address (base 16) of the EEPROM.
 ```
