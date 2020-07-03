@@ -41,11 +41,11 @@ int main(int argc, char **argv)
 			case ':':
 			case 'h':
                 printf("USAGE: %s\n", argv[0]);
-				printf("Flags:\n", argv[0]);
-				printf("\t-i <interface>: the interface of the programmer. DEFAULT = /dev/ttyUSB0\n", argv[0]);
-				printf("\t-s <address>: start address of the dump (base 16). DEFAULT = 0x0000\n", argv[0]);
-				printf("\t-e <address>: end address of the dump (base 16). DEFAULT = 0x8000\n", argv[0]);
-				printf("\t-a <address>: dump a specific address (base 16) of the EEPROM.\n", argv[0]);
+				printf("Flags:\n");
+				printf("\t-i <interface>: the interface of the programmer. DEFAULT = /dev/ttyUSB0\n");
+				printf("\t-s <address>: start address of the dump (base 16). DEFAULT = 0x0000\n");
+				printf("\t-e <address>: end address of the dump (base 16). DEFAULT = 0x8000\n");
+				printf("\t-a <address>: dump a specific address (base 16) of the EEPROM.\n");
 				return (1);
 		}
 	}
