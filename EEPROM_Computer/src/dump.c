@@ -8,7 +8,7 @@
 
 int serial;
 
-uint8_t dump(uint16_t address);
+uint8_t read_eeprom(uint16_t address);
 
 int main(int argc, char **argv)
 {
@@ -58,7 +58,7 @@ int main(int argc, char **argv)
 	line[16] = '\0';
 
 	if (display_address) {
-		byte = dump(address);
+		byte = read_eeprom(address);
 		printf("%04x: %02x (%c)\n", address, byte, (isprint(byte)) ? byte : '.');
 		return (0);
 	}
@@ -70,7 +70,7 @@ int main(int argc, char **argv)
 			if (address < end_address)
 				printf("%04x: ", address);
 		}
-		byte = dump(address);
+		byte = read_eeprom(address);
 		if (isprint(byte))
 			line[address % 16] = byte;
 		else
@@ -86,7 +86,7 @@ int main(int argc, char **argv)
 	return (0);
 }
 
-uint8_t dump(uint16_t address)
+uint8_t read_eeprom(uint16_t address)
 {
 	uint8_t byte;
 	int n = 0;
@@ -96,7 +96,7 @@ uint8_t dump(uint16_t address)
 	serialport_writebyte(serial, address & 0xff);
 	while (n != 1) {
 		n = read(serial, &byte, 1);
-		usleep(1000);
+		usleep(100);
 	}
 	return (byte);
 }
