@@ -36,7 +36,7 @@ int main(int argc, char **argv)
 		return 1;
 	uint16_t program_size = 0x7ffa;
 	while (program[--program_size] == 0 || program[program_size] == 0xff);
-	program_size += 2;
+	program_size++;
 	sleep(1);
 	for (uint16_t address = 0; address < program_size; address++) {
 		printf("\r[0x%04x/0x%04x] Writing program %3i%%", address, program_size, (address) * 100 / program_size);
@@ -45,11 +45,11 @@ int main(int argc, char **argv)
 	}
 	printf("\r[0x%04x/0x%04x] Writing program 100%%\n", program_size, program_size);
 	for (uint16_t address = 0x7ffa; address < PROGRAM_SIZE; address++) {
-		printf("\r[0x%04x/0x%04x] Writing vectors %3i%%", address, PROGRAM_SIZE, (address) * 100 / PROGRAM_SIZE);
+		printf("\r[0x%04x/0x%04x] Writing vectors %3i%%", address, PROGRAM_SIZE - 1, (address) * 100 / PROGRAM_SIZE - 1);
 		fflush(stdout);
 		write_eeprom(address, program[address]);
 	}
-	printf("\r[0x%04x/0x%04x] Writing vectors 100%%\n", PROGRAM_SIZE, PROGRAM_SIZE);
+	printf("\r[0x%04x/0x%04x] Writing vectors 100%%\n", PROGRAM_SIZE - 1, PROGRAM_SIZE - 1);
 
 	uint16_t bytes_differ = 0;
 	for (uint16_t address = 0; address < program_size; address++) {
@@ -60,7 +60,7 @@ int main(int argc, char **argv)
 		if (program[address] != byte)
 			bytes_differ++;
 	}
-	printf("\r[0x%04x/0x%04x] Verify program integrity 100%%\n", PROGRAM_SIZE, PROGRAM_SIZE);
+	printf("\r[0x%04x/0x%04x] Verify program integrity 100%%\n", program_size, program_size);
 	if (!bytes_differ)
 		printf("Integrity done!	  \n");
 	else
