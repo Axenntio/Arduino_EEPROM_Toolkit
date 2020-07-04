@@ -52,4 +52,4 @@ $> ./eedump -i <interface> -s <address> -e <address> -a <address>
 
 ### Known bugs
 #### 0x0d char
-When the the Integrity check is done (`eeprog`), or a dump of the EEPROM (`eedump`), char with value `0x0d` in the EEPROM are reads like `0x0a` which trigger integrity failure.
+When the the Integrity check is done (`eeprog`), or a dump of the EEPROM (`eedump`), char with value `0x0d` in the EEPROM are reads like `0x0a` (but they are effectively `0x0d`) which trigger integrity failure.
