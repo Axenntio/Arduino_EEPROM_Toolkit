@@ -48,3 +48,8 @@ $> ./eedump -i <interface> -s <address> -e <address> -a <address>
 	-e <address>: end address of the dump (base 16). DEFAULT = 0x8000
 	-a <address>: dump a specific address (base 16) of the EEPROM.
 ```
+
+
+### Known bugs
+#### 0x0d char
+When the the Integrity check is done (`eeprog`), or a dump of the EEPROM (`eedump`), char with value `0x0d` in the EEPROM are reads like `0x0a` which trigger integrity failure.
